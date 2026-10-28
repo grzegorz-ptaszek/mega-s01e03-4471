@@ -1,0 +1,57 @@
+---
+layout: runbook
+title: '#4471 · three problems, not one'
+owner: Grzegorz Ptaszek
+status: proposed
+reviewed: 2026-10-28
+signature: Grzegorz Ptaszek
+---
+
+<script>
+  import ProblemSplit from '#lib/kb/ProblemSplit.svelte';
+  import CauseTable from '#lib/kb/CauseTable.svelte';
+  import Callout from '#lib/kb/Callout.svelte';
+  import RenderStamp from '#lib/kb/RenderStamp.svelte';
+</script>
+
+The [#4471 page](/kb/incidents/4471) says the 412 merged reports are one parser bug with one
+fix queued. They are not. The desk's own rules (`causes.ts`) put them in two causes, and the
+desk's own notes (`desk-notes.json`) set five reports aside that fit neither.
+
+<Callout>
+Not known. Fixing the parser closes one of three problems. The other two stay open and have
+no ticket of their own.
+</Callout>
+
+## The three problems
+
+<ProblemSplit ticket={4471} />
+
+- **parser.** The shared parser reads every date month first. Day-first tenants get flipped
+  dates. This is the problem #4471 describes.
+- **hint.** Reports through the booking-v3 form, from the three tenants that run it. The form
+  prints `MM/DD/YYYY`, so people type month first. A parser fix does not change it.
+- **one-day shift.** Five reports of a date one day off, or an invite that arrived before the
+  booking. A month-first parser cannot do this. The cause is not confirmed; a time-zone
+  error is the first guess.
+
+## What the desk's table shows
+
+<CauseTable ticket={4471} />
+
+The table counts the five one-day reports under `parser`, because that is where their tenant
+files them. That is why `parser` reads five higher here than above.
+
+## How to tell them apart
+
+The cause depends on the tenant (its locale and its booking form), not on the intake tag.
+Intake guesses from the reporter's browser, and the guess is wrong often: some reports tagged
+`hint` belong to the parser, and some tagged `parser` come through the hint.
+
+## Lessons
+
+- Merge on the cause, not on the subject. A subject says what the reporter saw, not what broke.
+- Count a report once. The ticket export pages overlap, so a report can come twice; one id is one report.
+- A count that tells engineering how big the work is must be the count for one problem.
+
+<RenderStamp {signature} />
