@@ -2,7 +2,7 @@
 layout: runbook
 title: '#4471 · two problems, not one'
 owner: Grzegorz Ptaszek
-status: proposed
+status: closed
 reviewed: 2026-10-28
 signature: v1.eyJzdWIiOiI0MjE1IiwiYXVkIjoiY2hhbGxlbmdlOndoYXQtaXQtc2hvd3MiLCJpYXQiOjE3OTMyMjE4NDUsImV4cCI6MTc5MzMwODI0NX0.vRCRNAdWsmKl-mjoQUr_jWBeqmyfALdZ6YAGJbS64qc
 ---
@@ -19,7 +19,8 @@ fix queued. They are not. The desk's own rules (`causes.ts`) put them in two cau
 one of them is the parser bug.
 
 <Callout>
-Not known. Fixing the parser closes one of two problems. The other has no ticket of its own.
+Two problems, not one. Engineering closed #4471 on 5 October: the parser is fixed, the hint is
+won't fix because the booking-v3 form is retired.
 </Callout>
 
 ## The two problems
@@ -35,6 +36,13 @@ Five of the parser reports describe a date one day off, or an invite that arrive
 booking. A month-first parser cannot do that, so their cause is not confirmed; a time-zone
 error is the first guess. The desk sets them aside in `desk-notes.json` and counts them with
 the parser, and so does this page.
+
+## Outcome
+
+Engineering update, #4471 closed 5 October:
+
+- **parser: fixed** by `fix(dates): parse dd/mm for eu locales`. Tracked in issue #1, closed as completed.
+- **hint: won't fix.** The booking-v3 form is retired. Tracked in issue #2, closed as not planned.
 
 ## What the desk's table shows
 
