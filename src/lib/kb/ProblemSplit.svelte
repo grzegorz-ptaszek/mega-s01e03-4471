@@ -7,18 +7,16 @@
   let { ticket }: { ticket: number } = $props();
 
   const merged = $derived(uniqueById(reports as Report[]).filter((r) => r.mergedInto === ticket));
-  // The desk sets the one-day reports aside (desk-notes.json) but still files them under their tenant's cause.
-  const problems = $derived.by(() => {
-    const shift = merged.filter((r) => notes.oneDayMove.includes(r.id));
-    const rest = merged.filter((r) => !notes.oneDayMove.includes(r.id));
-    const by = (c: string) => rest.filter((r) => (causeOf(r, tenantOf(r)) ?? 'unplaced') === c);
-    return [
+  const by = (c: string) => merged.filter((r) => (causeOf(r, tenantOf(r)) ?? 'unplaced') === c);
+  // Counted where the desk files them: by the tenant's cause. The one-day reports are footnoted, not split off.
+  const oneDay = $derived(merged.filter((r) => notes.oneDayMove.includes(r.id)).length);
+  const problems = $derived(
+    [
       { name: 'parser', what: 'shared parser reads day-first dates month first', n: by('parser').length },
       { name: 'hint', what: 'booking-v3 form hint says MM/DD/YYYY', n: by('hint').length },
-      { name: 'one-day shift', what: 'date one day off, not a swap (cause not confirmed)', n: shift.length },
       { name: 'unplaced', what: 'no day-first tenant on file', n: by('unplaced').length },
-    ].filter((p) => p.n > 0);
-  });
+    ].filter((p) => p.n > 0),
+  );
 </script>
 
 <p class="sum">
@@ -34,6 +32,11 @@
   </tbody>
 </table>
 
+{#if oneDay}
+  <p class="note">{oneDay} of the <code>parser</code> reports read as a one-day move, not a month/day swap. The desk counts them with the parser.</p>
+{/if}
+
 <style>
   .sum { font-size: 1.1rem; }
+  .note { color: var(--muted); font-size: 0.85em; }
 </style>
